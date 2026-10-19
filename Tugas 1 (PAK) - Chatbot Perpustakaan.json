@@ -1,0 +1,114 @@
+{
+  "name": "Tugas 1 (PAK) - Chatbot Perpustakaan",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! 👋 Saya asisten virtual perpustakaan. Silakan tanya seputar jam buka, peminjaman, atau denda.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.5,
+      "position": [
+        -160,
+        -112
+      ],
+      "id": "c2248e38-690b-47c3-b81d-098c1584c06b",
+      "name": "When chat message received",
+      "webhookId": "366fa7ab-697f-4200-8032-48109f2101a4"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Anda adalah asisten virtual perpustakaan. Tugas Anda menjawab pertanyaan pengunjung berdasarkan informasi berikut:\n\n- Jam buka: Senin-Jumat 08.00-16.00 WIB, Sabtu 08.00-12.00 WIB, Minggu tutup.\n- Peminjaman: maksimal 3 buku selama 7 hari.\n- Perpanjangan: 1 kali sebelum jatuh tempo.\n- Denda keterlambatan: Rp1.000 per buku per hari.\n\nAturan:\n- Jawab hanya sesuai informasi di atas. Jika tidak ada informasi, jangan mengarang. Jawab: \"Maaf, saya tidak memiliki informasi tersebut. Silakan hubungi petugas perpustakaan.\"\n- Jika pertanyaan tidak berkaitan dengan perpustakaan, tolak dengan sopan.\n- Jawab singkat (kurang dari 100 kata), dalam bahasa Indonesia yang ramah, dengan emoji secukupnya."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        64,
+        -112
+      ],
+      "id": "7e681d7f-106d-4075-8ea4-beb859223b52",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        16,
+        128
+      ],
+      "id": "a4d243c3-9229-48c7-bc5a-8f107e70bca7",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZyE4NNMgoCjOrzDs",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        160,
+        128
+      ],
+      "id": "52d88aca-d747-4c68-956a-af3f2829a1a0",
+      "name": "Simple Memory"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "65a7cbc2-8064-4a4c-a80c-e476de87cb23",
+  "meta": {
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "tex0ypgwKQM36sZl",
+  "tags": []
+}
